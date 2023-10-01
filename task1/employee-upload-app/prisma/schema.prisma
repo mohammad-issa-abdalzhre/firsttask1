@@ -1,0 +1,24 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+
+// generator client {
+//   provider = "sqlite"
+//   output   = "file:./dev.db"
+// }
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Employee {
+  id            Int      @id @default(autoincrement())
+  employeeId    Int     @unique  
+  position String
+  employeeSalary Float
+}

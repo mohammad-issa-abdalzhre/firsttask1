@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Users by user ID </title>
+</head>
+<body>
+    <h1>Search Users by user ID</h1>
+    <form id="searchForm">
+        <label for="salary">Enter Salary:</label>
+        <input type="number" id="salary" name="salary">
+        <button type="submit">Search</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchForm = document.getElementById('searchForm');
+            const salaryInput = document.getElementById('salary');
+            const resultsDiv = document.getElementById('results');
+
+            searchForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const salary = parseInt(salaryInput.value);
+
+                try {
+                    const response = await fetch('/employ/2', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ salary }),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        displayResults(data);
+                    } else {
+                        resultsDiv.textContent = 'Error searching for users.';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    resultsDiv.textContent = 'An error occurred while searching for users.';
+                }
+            });
+
+            function displayResults(users) {
+                resultsDiv.innerHTML = '';
+
+                if (users.length === 0) {
+                    resultsDiv.textContent = 'No users found with the specified user ID.';
+                } else {
+                    const ul = document.createElement('ul');
+                    users.forEach((user) => {
+                        const li = document.createElement('li');
+                        li.textContent = `Position: ${user.position}, Salary: ${user.employeeSalary}`;
+                        ul.appendChild(li);
+                    });
+                    resultsDiv.appendChild(ul);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

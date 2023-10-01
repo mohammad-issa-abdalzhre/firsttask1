@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+</head>
+<body>
+    <h1>File Upload Example</h1>
+    <form id="uploadForm">
+        <input type="file" id="fileInput">
+        <button type="submit">Upload File</button>
+    </form>
+    <div id="response"></div>
+
+    <!-- Display the 'xx' data here -->
+    <div id="xxData"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadForm = document.getElementById('uploadForm');
+            const fileInput = document.getElementById('fileInput');
+            const responseDiv = document.getElementById('response');
+            const xxDataDiv = document.getElementById('xxData');
+
+            uploadForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const file = fileInput.files[0];
+                if (!file) {
+                    responseDiv.textContent = 'Please select a file to upload.';
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('/employ/csv', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        responseDiv.textContent = `File uploaded successfully. Server response: ${data.message}`;
+                        
+                        // Display 'xx' data
+                        if (data.xx) {
+                            xxDataDiv.textContent = `Total Rows: ${data.xx.totalRows}, Total Salaries Before Cleaning: ${data.xx.totalSalariesBeforeCleaning} ,Total Salaries After Cleaning: ${data.xx.totalSalariesAfterCleaning}`;
+                        }
+                    } else {
+                        responseDiv.textContent = 'File upload failed.';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    responseDiv.textContent = 'An error occurred while uploading the file.';
+                }
+            });
+        });
+    </script>
+
+    <h1>Delete All Data</h1>
+    <form id="deleteForm">
+        <button type="submit">Delete All Data</button>
+    </form>
+    <div id="response"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const deleteForm = document.getElementById('deleteForm');
+            const responseDiv = document.getElementById('response');
+
+            deleteForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                try {
+                    const response = await fetch('/employ/deleteAll', {
+                        method: 'DELETE',
+                    });
+
+                    if (response.ok) {
+                        responseDiv.textContent = 'All data deleted successfully.';
+                    } else {
+                        responseDiv.textContent = 'Error deleting all data.';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    responseDiv.textContent = 'An error occurred while deleting all data.';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+</body>
+</html>
